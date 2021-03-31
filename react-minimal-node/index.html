@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>React in one minute</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript in browser.</noscript>
+
+    <div class="like_button_container" data-my-comment="yo"></div>
+    <div class="like_button_container" data-my-comment="1"></div>
+    <div class="like_button_container" data-my-comment="2"></div>
+    <div class="like_button_container" data-my-comment="3"></div>
+
+    <!-- React and React-DOM as UMD modules from some CDA -->
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+
+    <!-- Script rendering something using React -->
+    <script src="like-button.js"></script>
+  </body>
+</html>
+

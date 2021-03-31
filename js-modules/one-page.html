@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=500, initial-scale=1" />
+    <meta name="color-scheme" content="dark light">
+    <title>Page using ES6 modules.</title>
+
+    <!-- Icons begin: (https://favicon.io/favicon-generator/) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="/favicon_io/site.webmanifest">
+    <!-- Icons end: -->
+
+    <!-- Very simple styling + dark mode support 😎 -->
+    <style>
+      body {
+        position: absolute; 
+        left: 50%; 
+        width: 500px; 
+        margin-left: -250px; 
+        
+        padding-top: 100px; 
+        padding-bottom: 200px;
+      }
+
+      /* 
+       *  Dark Mode Support!!!
+       *  https://css-tricks.com/a-complete-guide-to-dark-mode-on-the-web/  
+       */
+      body {
+        color: #222;
+        background: #fff;
+        font: 100% system-ui;
+      }
+      a {
+        color: #0033cc;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          color: #eee;
+          background: #121212;
+        }
+
+        body a {
+          color: #809fff;
+        }
+      }
+    </style>
+  </head>
+  <body >
+
+    <h1># Simple files serving</h1>
+
+      <p>
+        Typically for this file navigate to: 
+      </p>
+      <ul>
+        <li>
+          Typically localhost:
+          <ul>
+            <li>
+              <a href="localhost:8080/one-page.html">localhost:8080/one-page.html</a>.
+            </li>
+            <li>
+              <a href="127.0.0.1:8080/one-page.html">localhost:8080/one-page.html</a>.
+            </li>
+          </ul>
+        </li>
+        <li>
+          Local network address, e.g.:
+          <a href="192.168.0.192:8080/one-page.html">192.168.0.192:8080/one-page.html</a>,
+          which can also be accessible from other computers in local network
+          depending on static file server machine firewall configuration.
+        </li>
+        <li>
+          Internet address of server machine, e.g.:
+          <a href="xxx.xxx.x.xxx:8080/one-page.html">xxx.xxx.x.xxx:8080/one-page.html</a>,
+          which can also be accessible from other computers 
+          depending on static file server machine firewall configuration and router
+          firewall configuration.
+        </li>
+      </ul>
+
+      <h2>## Write your own static files server in node</h2>
+
+        See for example <a href="node-file-server.js">node-file-server.js</a>
+
+        <pre>
+$ node node-file-server.js [port=9000]
+        </pre>
+        
+
+      <h2>## <a href="https://www.npmjs.com/package/http-server">http-server</a></h2>
+        
+        <p>Example usage:</p>
+        <pre>
+$ npx http-server [path] [options]
+        </pre>
+      
+      <h2>## <a href="https://www.npmjs.com/package/serve">serve</a></h2>
+
+        <p>Example usage:</p>
+        <pre>
+$ npx serve [folder_name]
+        </pre>
+      
+      <h2>## <a href="https://www.npmjs.com/package/local-web-server">local-web-server</a></h2>
+        <p>Example usage:</p>
+        <pre>
+$ npx --package local-web-server --call 'ws --spa one-page.html'
+        </pre>
+      
+    <h1># Firewall (uwf)</h1>
+      
+      <p>
+        Local static server will expose port, which when not blocked for incomming
+        connection it will allow browse local files from:
+      </p>
+
+      <ul>
+        <li>
+          Local network (e.g. <code>192.168.0.1/16</code>)
+        </li>
+        <li>
+          Internet if router does not have firewall (which it usually have enabled).
+        </li>
+      </ul>
+
+      <p>
+        To prevent this, one may use <code>ufw</code> command,
+        which is user interface to nftables kernel services.
+        For example:
+      </p>
+
+      <pre>
+$ sudo ufw enable
+$ sudo ufw status verbose
+      </pre>
+
+      <h2>## Links</h2>
+
+        <ul>
+          <li>
+            <code>$ man ufw</code>
+          </li>
+          <li>
+            <a href="https://ubuntu.com/server/docs/security-firewall">
+              Security - Firewall | Ubuntu
+            </a>
+          </li>
+          <li>
+            <a href="https://en.wikipedia.org/wiki/Uncomplicated_Firewall">
+              ufw | Wikipedia
+            </a>
+          </li>
+          <li>
+            <a href="https://en.wikipedia.org/wiki/Nftables">
+              Nftables | Wikipedia
+            </a>
+          </li>
+          <li>
+            <a href="https://www.cyberciti.biz/faq/how-to-configure-firewall-with-ufw-on-ubuntu-20-04-lts/">
+              How To Configure Firewall with UFW on Ubuntu 20.04 LTS | nixCraft
+            </a>
+          </li>
+        </ul>
+    
+    <h1>Using modules</h1>
+
+      File using modules needs to have CORS context. <em>file://</em> protocol
+      currently does not suport CORS headers so html pages opened from file
+      in browser which uses modules will not work. Same files must be served
+      from server which adds mime and CORS headers.
+
+
+    <h1>Scripts loading</h1>
+
+      <h2>Defered scripts loading (default for modules)</h2>
+        
+        
+        Defered script loading in practice means that:
+
+        <ul>
+          <li>
+            downloading external module scripts 
+            <code>&lt;script type="module" src="..."&gt;</code> 
+            doesn’t block HTML processing, they load in parallel with other resources.
+          </li>
+          <li>
+            module scripts wait until the HTML document is fully ready 
+            (even if they are tiny and load faster than HTML), and then run.
+          </li>
+          <li>
+            relative order of scripts is maintained: 
+            scripts that go first in the document, execute first.
+          </li>
+          <li>
+            As a side-effect, module scripts always “see” the fully 
+            loaded HTML-page, including HTML elements below them.
+          </li>
+          <li>
+            Based on: 
+            <a href="https://javascript.info/modules-intro">https://javascript.info/modules-intro</a>
+          </li>
+        </ul>
+
+        Scripts which can have <em>deffer</em> attribute are:
+
+        <ul>
+          <li>regular external scripts (for regular embedded scripts attribute is ignored)</li>
+          <li>module embedded/external scripts</li>
+        </ul>
+
+        Example:
+        <pre>
+&lt;script defer src="./some-script.js"&gt;&lt;/script&gt;
+&lt;script defer type="module" src="./some-module.js"&gt;&lt;/script&gt;
+&lt;script defer type="module"&gt;&lt;/script&gt;
+        </pre>
+    
+      <h2>Regular script default loading</h2>
+
+        Regular scripts loads when available (downloaded and parsed).
+        For example, follwing will be executed at arbibrary moment,
+        when there is need to work with DOM, script need to catch
+        apriopriate event and do its proccessing inside callback.
+
+        <pre>
+&lt;script&gt;
+  console.log('Yo yo')
+&lt;/script&gt;
+        </pre>
+
+      <h2>Async scripts (regular and module)</h2>
+
+        <em>Async scripts are run when ready, there is no defined sequencing.</em>. 
+        
+        They are good for functionality
+        that doesn’t depend on anything, like: counters, ads, document-level 
+        event listeners.
+
+        Async scripts are valid for:
+        <ul>
+          <li>
+            Regular external scripts. Regular embedded scripts cannot be marked as 
+            async, but their default behaviour runs them when ready,
+            but in top down order.
+          </li>
+          <li>
+            Module scripts (external and embedded).
+          </li>
+        </ul>
+
+        Example:
+        <pre>
+&lt;script async src="./some-script.js"&gt;&lt;/script&gt;
+&lt;script async type="module" src="./some-module.js"&gt;&lt;/script&gt;
+&lt;script async type="module"&gt;&lt;/script&gt;
+        </pre>
+
+      <h2>Compatibility (<em>nomodule</em>)</h2>
+
+      Old browsers do not understand <em>type="module"</em>. 
+      Scripts of an unknown type are just ignored. 
+      For them, it’s possible to provide a fallback 
+      using the <em>nomodule</em> attribute:
+
+      <pre>
+&lt;script type="module"&gt;
+  alert("Runs in modern browsers");
+&lt;/script&gt;
+
+&lt;script nomodule&gt;
+  alert("Modern browsers know both type=module and nomodule, so skip this")
+  alert("Old browsers ignore script with unknown type=module, but execute this.");
+&lt;/script&gt;
+      </pre>
+
+      <h2>Bundlers</h2>
+
+      Bundlers simulate module loader and in effect create single (typically) or
+      multiple (can be configured) files.
+
+      Resulting file does not use import so it can be referenced by 
+      regular script tag.
+
+      Example:
+
+      <pre>
+&lt;script defer src="./out/bundle.js"&gt;&lt;/script&gt;
+      </pre>
+
+
+
+
+    <h1>Dynamic DOM content</h1>
+
+      Dynamic content for ES6 modules experiments will be 
+      put in <code>&lt;div id="root"&gt;&lt;/div&gt;</code> element below.
+
+      <div id="root"></div>
+      
+
+      <!-- Controlling script module -->
+      <script type="module">
+
+        import {default as experimentImport} from './module-load-experiments.js'
+        import {x as updatedUser} from './gritter.js'
+        import {displayColorsInPre} from './module-promises.js'
+        
+        // module importing experiments
+        experimentImport()
+        // check if multiple imported module was loaded onece
+        console.log(
+          'Modules are loaded only once, user is not updated: '
+          , updatedUser
+        )
+        
+        // check module defer behaviour
+        console.log(typeof myButt)
+        console.log(myButt)
+        myButt.textContent = 'yoyo'
+        window.myButt.textContent = 'DOM elements with id finishes as window.{id}'
+        
+        displayColorsInPre()
+
+
+
+      </script>
+
+      <button id="myButt">Button</button>
+
+  </body>
+</html>

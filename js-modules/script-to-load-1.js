@@ -1,0 +1,1 @@
+function script1Test() {return 'Hellow form script-to-load-1.js'}
